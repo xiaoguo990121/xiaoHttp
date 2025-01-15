@@ -55,20 +55,25 @@ generate_export_header(${PROJECT_NAME} EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_D
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 20)
 set_target_properties(${PROJECT_NAME} PROPERTIES EXPORT_NAME XiaoLog)
 
+include(cmake/ParseAndAddDrogonTests.cmake)
 
 set(XIAOHTTP_SOURCES
-lib/src/CacheFile.cpp
-lib/src/HttpUtils.cpp
+    lib/src/CacheFile.cpp
+    lib/src/HttpUtils.cpp
+    lib/src/DrClassMap.cpp
+    lib/src/xiaoHttp_test.cpp
 )
 
 set(private_headers
-lib/src/CacheFile.h
-lib/src/HttpUtils.h
+    lib/src/CacheFile.h
+    lib/src/HttpUtils.h
 )
 
 set(XIAOHTTP_HEADERS
-
-lib/inc/xiaoHttp/DrClassMap.h
+    lib/inc/xiaoHttp/DrClassMap.h
+    lib/inc/xiaoHttp/DrObject.h
+    lib/inc/xiaoHttp/xiaoHttp_test.h
+    lib/inc/xiaoHttp/Session.h
 )
 
 
@@ -83,12 +88,10 @@ target_include_directories(
 set(PROJECT_BASE_PATH ${PROJECT_SOURCE_DIR})
 
 if(BUILD_TESTING)
+    message(STATUS "Building tests")
+    enable_testing()
+    add_subdirectory(lib/tests)
     add_subdirectory(xiaoNet/tests)
-    find_package(GTest)
-    if(GTest_FOUND)
-        enable_testing()
-        add_subdirectory(xiaoNet/unittests)
-    endif()
 endif()
 
 target_sources(
