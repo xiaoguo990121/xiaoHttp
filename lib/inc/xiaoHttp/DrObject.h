@@ -118,7 +118,7 @@ namespace xiaoHttp
                 return className;
             }
 
-            template <typeName D>
+            template <typename D>
             void registerClass()
             {
                 // 判断D是否具有默认构造函数，如果D可以通过无参构造函数创建的类型即D()

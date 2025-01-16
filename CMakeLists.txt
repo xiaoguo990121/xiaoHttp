@@ -53,35 +53,54 @@ include(GenerateExportHeader)
 generate_export_header(${PROJECT_NAME} EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/exports/xiaoHttp/exports.h)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 20)
+set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD_REQUIRED ON)
+set_target_properties(${PROJECT_NAME} PROPERTIES CXX_EXTENSIONS OFF)
 set_target_properties(${PROJECT_NAME} PROPERTIES EXPORT_NAME XiaoLog)
 
 include(cmake/ParseAndAddDrogonTests.cmake)
 
 set(XIAOHTTP_SOURCES
     lib/src/CacheFile.cpp
-    lib/src/HttpUtils.cpp
+    lib/src/Cookie.cpp
     lib/src/DrClassMap.cpp
+    lib/src/HttpUtils.cpp
+    lib/src/HttpRequestParser.cpp
     lib/src/xiaoHttp_test.cpp
+    lib/src/SessionManager.cpp
+    lib/src/Utilities.cpp
 )
 
 set(private_headers
     lib/src/CacheFile.h
+    lib/src/HttpRequestParser.h
     lib/src/HttpUtils.h
+    lib/src/impl_forwards.h
+    lib/src/SessionManager.h
 )
 
 set(XIAOHTTP_HEADERS
+    lib/inc/xiaoHttp/Attribute.h
+    lib/inc/xiaoHttp/CacheMap.h
+    lib/inc/xiaoHttp/Cookie.h
     lib/inc/xiaoHttp/DrClassMap.h
     lib/inc/xiaoHttp/DrObject.h
+    lib/inc/xiaoHttp/HttpTypes.h
     lib/inc/xiaoHttp/xiaoHttp_test.h
+    lib/inc/xiaoHttp/xiaoHttp_callbacks.h
     lib/inc/xiaoHttp/Session.h
 )
 
+set(XIAOHTTP_UTIL_HEADERS
+    lib/inc/xiaoHttp/utils/Utilities.h    
+)
 
-message("${CMAKE_CURRENT_BINARY_DIR}")
+
+message("${PROJECT_SOURCE_DIR}")
 target_include_directories(
     ${PROJECT_NAME}
-    PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}> $<INSTALL_INTERFACE:${INSTALL_INCLUDE_DIR}>
+    PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/lib/inc> 
            $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/exports>
+           $<INSTALL_INTERFACE:${INSTALL_INCLUDE_DIR}>
     PRIVATE ${PROJECT_SOURCE_DIR}
 )
 
@@ -98,6 +117,7 @@ target_sources(
     ${PROJECT_NAME}
     PRIVATE ${XIAOHTTP_SOURCES}
             ${private_headers}
+            ${XIAOHTTP_UTIL_HEADERS}
             ${CMAKE_CURRENT_BINARY_DIR}/exports/xiaoHttp/exports.h)
 
 

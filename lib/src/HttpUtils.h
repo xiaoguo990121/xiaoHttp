@@ -11,5 +11,11 @@
 #pragma once
 
 #include <xiaoNet/utils/MsgBuffer.h>
+#include <xiaoHttp/HttpTypes.h>
 #include <string>
-#include <string>
+
+namespace xiaoHttp
+{
+    const std::string_view &contentTypeToMime(ContentType contentType);
+    const std::string_view &statusCodeToString(int code);
+}

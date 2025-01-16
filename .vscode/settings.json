@@ -61,6 +61,10 @@
         "stop_token": "cpp",
         "thread": "cpp",
         "variant": "cpp",
-        "format": "cpp"
+        "format": "cpp",
+        "any": "cpp",
+        "map": "cpp",
+        "unordered_set": "cpp",
+        "codecvt": "cpp"
     }
 }

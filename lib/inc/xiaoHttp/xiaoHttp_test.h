@@ -195,7 +195,7 @@ namespace xiaoHttp
                 const T &ref_;
 
                 template <typename RhsType>
-                ComparsionResult operator>(const RhsType &rhs)
+                ComparsionResult operator<(const RhsType &rhs)
                 {
                     return ComparsionResult{ref_ < rhs,
                                             attemptPrint(ref_) + " < " +
