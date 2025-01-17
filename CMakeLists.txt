@@ -65,6 +65,7 @@ set(XIAOHTTP_SOURCES
     lib/src/DrClassMap.cpp
     lib/src/HttpUtils.cpp
     lib/src/HttpRequestParser.cpp
+    lib/src/HttpRequestImpl.cpp
     lib/src/xiaoHttp_test.cpp
     lib/src/SessionManager.cpp
     lib/src/Utilities.cpp
@@ -74,6 +75,7 @@ set(private_headers
     lib/src/CacheFile.h
     lib/src/HttpRequestParser.h
     lib/src/HttpUtils.h
+    lib/src/HttpRequestImpl.h
     lib/src/impl_forwards.h
     lib/src/SessionManager.h
 )
@@ -84,13 +86,17 @@ set(XIAOHTTP_HEADERS
     lib/inc/xiaoHttp/Cookie.h
     lib/inc/xiaoHttp/DrClassMap.h
     lib/inc/xiaoHttp/DrObject.h
+    lib/inc/xiaoHttp/HttpAppFramework.h
     lib/inc/xiaoHttp/HttpTypes.h
+    lib/inc/xiaoHttp/HttpRequest.h
     lib/inc/xiaoHttp/xiaoHttp_test.h
     lib/inc/xiaoHttp/xiaoHttp_callbacks.h
     lib/inc/xiaoHttp/Session.h
+    lib/inc/xiaoHttp/UploadFile.h
 )
 
 set(XIAOHTTP_UTIL_HEADERS
+    lib/inc/xiaoHttp/utils/coroutine.h
     lib/inc/xiaoHttp/utils/Utilities.h    
 )
 
@@ -100,6 +106,7 @@ target_include_directories(
     ${PROJECT_NAME}
     PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/lib/inc> 
            $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/exports>
+           $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
            $<INSTALL_INTERFACE:${INSTALL_INCLUDE_DIR}>
     PRIVATE ${PROJECT_SOURCE_DIR}
 )
@@ -129,8 +136,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE XiaoNet::XiaoNet)
 
 find_package(Jsoncpp REQUIRED)
 target_link_libraries(${PROJECT_NAME} PUBLIC Jsoncpp_lib)
-list(APPEND INCLUDE_DIRS_FOR_DYNAMIC_VIEW ${JSONCPP_INCLUDE_DIRS})
-
+list(APPEND INCLUcd DE_DIRS_FOR_DYNAMIC_VIEW ${JSONCPP_INCLUDE_DIRS})
+message("${JSONCPP_INCLUDE_DIRS}")
 # install(
 #     TARGETS xiaoNet
 #     EXPORT XiaoNetTargets
