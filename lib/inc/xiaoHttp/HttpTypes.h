@@ -7,12 +7,14 @@
  *
  *
  */
+
 #pragma once
 
 namespace xiaoHttp
 {
     enum HttpStatusCode
     {
+        kUnknown = 0,
         k100Continue = 100,
         k101SwitchingProtocols = 101,
         k102Processing = 102,

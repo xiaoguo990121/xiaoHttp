@@ -359,7 +359,7 @@ namespace xiaoHttp
         virtual void setPath(const std::string &path) = 0;
         virtual void setPath(std::string &&path) = 0;
 
-        virtual void setPathEncod(bool) = 0;
+        virtual void setPathEncode(bool) = 0;
 
         virtual void setParameter(const std::string &key,
                                   const std::string &value) = 0;
@@ -398,7 +398,7 @@ namespace xiaoHttp
         }
 
         virtual bool isOnSecureConnection() const noexcept = 0;
-        virtual bool setContentTypeString(const char *typeString,
+        virtual void setContentTypeString(const char *typeString,
                                           size_t typeStringLength) = 0;
 
         virtual ~HttpRequest()

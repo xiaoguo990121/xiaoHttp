@@ -60,24 +60,45 @@ set_target_properties(${PROJECT_NAME} PROPERTIES EXPORT_NAME XiaoLog)
 include(cmake/ParseAndAddDrogonTests.cmake)
 
 set(XIAOHTTP_SOURCES
+    lib/src/AOPAdvice.cpp
     lib/src/CacheFile.cpp
     lib/src/Cookie.cpp
     lib/src/DrClassMap.cpp
+    lib/src/HttpBinder.cpp
     lib/src/HttpUtils.cpp
+    lib/src/HttpViewData.cpp
     lib/src/HttpRequestParser.cpp
+    lib/src/HttpConnectionLimit.cpp
+    lib/src/HttpResponseImpl.cpp
     lib/src/HttpRequestImpl.cpp
+    lib/src/HttpAppFrameworkImpl.cpp
+    lib/src/HttpServer.cpp
+    lib/src/ListenerManager.cpp
     lib/src/xiaoHttp_test.cpp
+    lib/src/PluginsManager.cpp
     lib/src/SessionManager.cpp
     lib/src/Utilities.cpp
 )
 
 set(private_headers
+    lib/src/AOPAdvice.h
     lib/src/CacheFile.h
     lib/src/HttpRequestParser.h
+    lib/src/HttpServer.h
     lib/src/HttpUtils.h
     lib/src/HttpRequestImpl.h
+    lib/src/HttpResponseImpl.h
+    lib/src/HttpAppFrameworkImpl.h
+    lib/src/HttpConnectionLimit.h
+    lib/src/HttpMessageBody.h
     lib/src/impl_forwards.h
+    lib/src/ListenerManager.h
+    lib/src/PluginsManager.h
     lib/src/SessionManager.h
+)
+set(private_headers
+    ${private_headers}
+    lib/src/DbClientManager.h
 )
 
 set(XIAOHTTP_HEADERS
@@ -87,29 +108,34 @@ set(XIAOHTTP_HEADERS
     lib/inc/xiaoHttp/DrClassMap.h
     lib/inc/xiaoHttp/DrObject.h
     lib/inc/xiaoHttp/HttpAppFramework.h
+    lib/inc/xiaoHttp/HttpBinder.h
     lib/inc/xiaoHttp/HttpTypes.h
+    lib/inc/xiaoHttp/HttpViewData.h
     lib/inc/xiaoHttp/HttpRequest.h
+    lib/inc/xiaoHttp/HttpResponse.h
     lib/inc/xiaoHttp/xiaoHttp_test.h
     lib/inc/xiaoHttp/xiaoHttp_callbacks.h
     lib/inc/xiaoHttp/Session.h
     lib/inc/xiaoHttp/UploadFile.h
+    lib/inc/xiaoHttp/WebSocketConnection.h
 )
 
 set(XIAOHTTP_UTIL_HEADERS
     lib/inc/xiaoHttp/utils/coroutine.h
+    lib/inc/xiaoHttp/utils/FunctionTraits.h
+    lib/inc/xiaoHttp/utils/HttpConstraint.h
     lib/inc/xiaoHttp/utils/Utilities.h    
 )
 
-
-message("${PROJECT_SOURCE_DIR}")
-target_include_directories(
-    ${PROJECT_NAME}
-    PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/lib/inc> 
-           $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/exports>
-           $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
-           $<INSTALL_INTERFACE:${INSTALL_INCLUDE_DIR}>
-    PRIVATE ${PROJECT_SOURCE_DIR}
+set(XIAOHTTP_PLUGIN_HEADERS
+    lib/inc/xiaoHttp/plugins/Plugin.h
 )
+
+
+set(ORM_HEADERS
+    orm_lib/inc/xiaoHttp/orm/DbClient.h
+)
+
 
 set(PROJECT_BASE_PATH ${PROJECT_SOURCE_DIR})
 
@@ -133,11 +159,22 @@ target_link_libraries(${PROJECT_NAME} PRIVATE XiaoLog::XiaoLog)
 
 find_package(XiaoNet)
 target_link_libraries(${PROJECT_NAME} PRIVATE XiaoNet::XiaoNet)
+message("${XIAONET_INCLUDE_DIRS}")
 
 find_package(Jsoncpp REQUIRED)
 target_link_libraries(${PROJECT_NAME} PUBLIC Jsoncpp_lib)
 list(APPEND INCLUcd DE_DIRS_FOR_DYNAMIC_VIEW ${JSONCPP_INCLUDE_DIRS})
 message("${JSONCPP_INCLUDE_DIRS}")
+
+target_include_directories(
+    ${PROJECT_NAME}
+    PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/lib/inc> 
+           $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/exports>
+           $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
+           $<INSTALL_INTERFACE:${INSTALL_INCLUDE_DIR}>
+    PRIVATE ${PROJECT_SOURCE_DIR}
+)
+
 # install(
 #     TARGETS xiaoNet
 #     EXPORT XiaoNetTargets

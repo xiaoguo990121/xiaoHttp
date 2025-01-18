@@ -15,6 +15,7 @@
 #include <xiaoNet/net/EventLoop.h>
 #include <xiaoNet/utils/MsgBuffer.h>
 #include <xiaoHttp/HttpTypes.h>
+#include "HttpUtils.h"
 
 namespace xiaoHttp
 {
@@ -108,8 +109,8 @@ namespace xiaoHttp
 
         bool isHead() const override
         {
-            return (method == HttpMethod::Head) ||
-                   ((method == HttpMethod::Get) &&
+            return (method_ == HttpMethod::Head) ||
+                   ((method_ == HttpMethod::Get) &&
                     (previousMethod_ == HttpMethod::Head));
         }
 
@@ -169,14 +170,14 @@ namespace xiaoHttp
             return defaultVal;
         }
 
-        const std::string *path() const override
+        const std::string &path() const override
         {
             return path_;
         }
 
         const std::string &getOriginalPath() const override
         {
-            return originalPath_.empty() ? paht_ : originalPath_;
+            return originalPath_.empty() ? path_ : originalPath_;
         }
 
         void setQuery(const char *start, const char *end)
@@ -383,7 +384,7 @@ namespace xiaoHttp
 
         void addCookie(const std::string &key, const std::string &value) override
         {
-            cookie_[key] = value;
+            cookies_[key] = value;
         }
 
         void setPassThrough(bool flag) override

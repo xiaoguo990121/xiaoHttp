@@ -9,6 +9,7 @@
  */
 
 #include "HttpRequestImpl.h"
+#include "HttpAppFrameworkImpl.h"
 
 using namespace xiaoHttp;
 
@@ -26,7 +27,7 @@ void HttpRequestImpl::parseJson() const
         std::call_once(once, []()
                        { builder["collectComments"] = false;
                        builder["stackLimit"] = static_cast<Json::UInt>(
-                        
-                       ) });
+                        xiaoHttp::app().getJsonParseStackLimit()
+                       ); });
     }
 }

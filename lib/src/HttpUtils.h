@@ -18,4 +18,6 @@ namespace xiaoHttp
 {
     const std::string_view &contentTypeToMime(ContentType contentType);
     const std::string_view &statusCodeToString(int code);
+    ContentType getContentType(const std::string &fileName);
+    ContentType parseContentType(const std::string_view &contentType);
 }

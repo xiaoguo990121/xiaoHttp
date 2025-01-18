@@ -65,6 +65,9 @@
         "any": "cpp",
         "map": "cpp",
         "unordered_set": "cpp",
-        "codecvt": "cpp"
-    }
+        "codecvt": "cpp",
+        "coroutine": "cpp",
+        "csignal": "cpp"
+    },
+    "C_Cpp.errorSquiggles": "disabled"
 }

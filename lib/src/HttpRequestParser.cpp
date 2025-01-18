@@ -11,7 +11,9 @@
 #include "HttpRequestParser.h"
 #include <xiaoHttp/utils/Utilities.h>
 #include "HttpRequestImpl.h"
+#include "HttpResponseImpl.h"
 #include "HttpUtils.h"
+#include "HttpAppFrameworkImpl.h"
 
 using namespace xiaoNet;
 using namespace xiaoHttp;
@@ -105,7 +107,7 @@ HttpRequestImplPtr HttpRequestParser::makeRequestForPool(HttpRequestImpl *ptr)
                 else
                 {
                     auto &loop = thisPtr->loop_;
-                    loop_->queueInLoop([thisPtr = std::move(thisPtr), p]()
+                    loop->queueInLoop([thisPtr = std::move(thisPtr), p]()
                                        {
                         p->reset();
                         thisPtr->requestsPool_.emplace_back(
@@ -164,7 +166,7 @@ int HttpRequestParser::parseRequest(MsgBuffer *buf)
                 return -1;
             }
             status_ = HttpRequestParseStatus::kExpectRequestLine;
-            buf->retrieveAll(space + 1);
+            buf->retrieveUntil(space + 1);
             continue;
         }
         case HttpRequestParseStatus::kExpectRequestLine:
@@ -172,7 +174,7 @@ int HttpRequestParser::parseRequest(MsgBuffer *buf)
             const char *crlf = buf->findCRLF();
             if (!crlf)
             {
-                if (buf->readableBytes() >= 64 1024)
+                if (buf->readableBytes() >= 64 * 1024)
                 {
                     buf->retrieveAll();
                     shutdownConnection(k414RequestURITooLarge);
@@ -180,7 +182,7 @@ int HttpRequestParser::parseRequest(MsgBuffer *buf)
                 }
                 return 0;
             }
-            if (!parseRequestLine(buf->peek(), crlf))
+            if (!processRequestLine(buf->peek(), crlf))
             {
                 buf->retrieveAll();
                 shutdownConnection(k400BadRequest);
@@ -443,7 +445,7 @@ void HttpRequestParser::pushRequestToPipelining(const HttpRequestPtr &req,
     requestPipelining_.push_back({req, {nullptr, isHeadMethod}});
 }
 
-bool HttpRequestParser::pushResponseToPipelining(const HttpResponsePtr &req,
+bool HttpRequestParser::pushResponseToPipelining(const HttpRequestPtr &req,
                                                  HttpResponsePtr resp)
 {
     assert(loop_->isInLoopThread());

@@ -15,7 +15,6 @@ find_path(JSONCPP_INCLUDE_DIRS
           NAMES json/json.h
           DOC "jsoncpp include dir"
           PATH_SUFFIXES jsoncpp)
-message("${JSONCPP_INCLUDE_DIRS}")
 find_library(JSONCPP_LIBRARIES NAMES jsoncpp DOC "jsoncpp library")
 
 # debug library on windows same naming convention as in qt (appending debug
