@@ -47,14 +47,14 @@ function(ParseFile SourceFile TestTarget)
     RemoveComments(Contents)
 
     # Find definition of test names
-    string(REGEX MATCHALL "[ \t]*DROGON_TEST[ \t]*\\\([a-zA-Z0-9_]+\\\)" Tests "${Contents}")
+    string(REGEX MATCHALL "[ \t]*XIAOHTTP_TEST[ \t]*\\\([a-zA-Z0-9_]+\\\)" Tests "${Contents}")
 
     foreach(TestLine ${Tests})
         # Strip newlines
         string(REGEX REPLACE "\\\\\n|\n" "" TestLine "${TestLine}")
 
         # Get the name of the test
-		string(REGEX REPLACE "[ \t]*DROGON_TEST[ \t]*" "" TestLine "${TestLine}")
+		string(REGEX REPLACE "[ \t]*XIAOHTTP_TEST[ \t]*" "" TestLine "${TestLine}")
         string(REGEX MATCHALL "[a-zA-Z0-9_]+" TestName "${TestLine}")
 
         # Validate that a test name and tags have been provided
@@ -71,7 +71,7 @@ function(ParseFile SourceFile TestTarget)
 endfunction()
 
 # entry point
-function(ParseAndAddDrogonTests TestTarget)
+function(ParseAndAddXiaoHttpTests TestTarget)
     get_target_property(SourceFiles ${TestTarget} SOURCES)
     foreach(SourceFile ${SourceFiles})
         ParseFile(${SourceFile} ${TestTarget})

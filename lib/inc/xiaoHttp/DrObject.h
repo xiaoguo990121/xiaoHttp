@@ -113,6 +113,7 @@ namespace xiaoHttp
 
             const std::string &className() const
             {
+
                 static std::string className =
                     DrClassMap::demangle(typeid(T).name());
                 return className;

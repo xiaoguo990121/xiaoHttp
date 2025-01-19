@@ -97,6 +97,7 @@ void DrClassMap::setSingleInstance(const std::shared_ptr<DrObjectBase> &ins)
 
 std::vector<std::string> DrClassMap::getAllClassName()
 {
+    LOG_TRACE << "getAllClassName called";
     std::vector<std::string> ret;
     for (auto const &iter : getMap())
     {

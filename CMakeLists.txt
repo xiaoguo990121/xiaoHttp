@@ -57,27 +57,28 @@ set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD_REQUIRED ON)
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_EXTENSIONS OFF)
 set_target_properties(${PROJECT_NAME} PROPERTIES EXPORT_NAME XiaoLog)
 
-include(cmake/ParseAndAddDrogonTests.cmake)
+include(cmake/ParseAndAddXiaoHttpTests.cmake)
 
 set(XIAOHTTP_SOURCES
-    lib/src/AOPAdvice.cpp
-    lib/src/CacheFile.cpp
-    lib/src/Cookie.cpp
+    # lib/src/AOPAdvice.cpp
+    # lib/src/CacheFile.cpp
+    # lib/src/Cookie.cpp
     lib/src/DrClassMap.cpp
-    lib/src/HttpBinder.cpp
-    lib/src/HttpUtils.cpp
-    lib/src/HttpViewData.cpp
-    lib/src/HttpRequestParser.cpp
-    lib/src/HttpConnectionLimit.cpp
-    lib/src/HttpResponseImpl.cpp
-    lib/src/HttpRequestImpl.cpp
-    lib/src/HttpAppFrameworkImpl.cpp
-    lib/src/HttpServer.cpp
-    lib/src/ListenerManager.cpp
+    # lib/src/HttpBinder.cpp
+    # lib/src/HttpUtils.cpp
+    # lib/src/HttpViewData.cpp
+    # lib/src/HttpRequestParser.cpp
+    # lib/src/HttpConnectionLimit.cpp
+    # lib/src/HttpResponseImpl.cpp
+    # lib/src/HttpRequestImpl.cpp
+    # lib/src/HttpAppFrameworkImpl.cpp
+    # lib/src/HttpServer.cpp
+    # lib/src/ListenerManager.cpp
     lib/src/xiaoHttp_test.cpp
-    lib/src/PluginsManager.cpp
-    lib/src/SessionManager.cpp
-    lib/src/Utilities.cpp
+    # lib/src/PluginsManager.cpp
+    lib/src/RealIpResolver.cpp
+    # lib/src/SessionManager.cpp
+    # lib/src/Utilities.cpp
 )
 
 set(private_headers
@@ -113,6 +114,7 @@ set(XIAOHTTP_HEADERS
     lib/inc/xiaoHttp/HttpViewData.h
     lib/inc/xiaoHttp/HttpRequest.h
     lib/inc/xiaoHttp/HttpResponse.h
+    lib/inc/xiaoHttp/IOThreadStorage.h
     lib/inc/xiaoHttp/xiaoHttp_test.h
     lib/inc/xiaoHttp/xiaoHttp_callbacks.h
     lib/inc/xiaoHttp/Session.h
@@ -129,6 +131,7 @@ set(XIAOHTTP_UTIL_HEADERS
 
 set(XIAOHTTP_PLUGIN_HEADERS
     lib/inc/xiaoHttp/plugins/Plugin.h
+    lib/inc/xiaoHttp/plugins/RealIpResolver.h
 )
 
 
@@ -143,7 +146,6 @@ if(BUILD_TESTING)
     message(STATUS "Building tests")
     enable_testing()
     add_subdirectory(lib/tests)
-    add_subdirectory(xiaoNet/tests)
 endif()
 
 target_sources(

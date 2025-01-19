@@ -74,11 +74,11 @@ namespace xiaoHttp
         {
             XIAOHTTP_EXPORT extern std::atomic<size_t> numAssertions;
             XIAOHTTP_EXPORT extern std::atomic<size_t> numCorrectAssertions;
-            XIAOHTTP_EXPORT extern std::atomic<size_t> numFailedTestCase;
+            XIAOHTTP_EXPORT extern std::atomic<size_t> numFailedTestCases;
             XIAOHTTP_EXPORT extern bool printSuccessfulTests;
 
             XIAOHTTP_EXPORT void registerCase(Case *test);
-            XIAOHTTP_EXPORT void unregisterCae(Case *test);
+            XIAOHTTP_EXPORT void unregisterCase(Case *test);
 
             template <typename _Tp, typename dummpy = void>
             struct is_printable : std::false_type
@@ -168,7 +168,7 @@ namespace xiaoHttp
                 return funcName + "(" + param1 + ", " + param2 + ")";
             }
 
-            struct ComparsionResult
+            struct ComparsionResult // 比较结果的结构体
             {
                 std::pair<bool, std::string> result() const
                 {
@@ -192,7 +192,7 @@ namespace xiaoHttp
                 {
                 }
 
-                const T &ref_;
+                const T &ref_; // 对传入左值的引用，表示比较中的左操作数
 
                 template <typename RhsType>
                 ComparsionResult operator<(const RhsType &rhs)
@@ -348,7 +348,7 @@ namespace xiaoHttp
             {
                 if (failed_ == false)
                 {
-                    internal::numFailedTestCase++;
+                    internal::numFailedTestCases++;
                     failed_ = true;
                 }
             }
@@ -380,7 +380,7 @@ namespace xiaoHttp
 
             virtual ~Case()
             {
-                internal::unregisterCae(this);
+                internal::unregisterCase(this);
             }
         };
 
@@ -449,7 +449,7 @@ namespace xiaoHttp
             on_non_standard_exception;                        \
         }                                                     \
         if (TEST_FLAG_)                                       \
-            xiaoHttp::test::interval::numCorrectAssertions++; \
+            xiaoHttp::test::internal::numCorrectAssertions++; \
         else                                                  \
             TEST_CTX->setFailed();                            \
         on_leaving;                                           \
@@ -738,7 +738,7 @@ namespace xiaoHttp
         : public xiaoHttp::DrObject<XIAOHTTP_TEST_CLASS_NAME_(test_name)>,   \
           public xiaoHttp::test::TestCase                                    \
     {                                                                        \
-        XIAOHTTP_TEST_CLASS_NAME_(test_naem)                                 \
+        XIAOHTTP_TEST_CLASS_NAME_(test_name)                                 \
         () : xiaoHttp::test::TestCase(#test_name)                            \
         {                                                                    \
         }                                                                    \

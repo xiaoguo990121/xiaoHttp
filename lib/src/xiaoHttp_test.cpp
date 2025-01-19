@@ -59,7 +59,7 @@ namespace xiaoHttp
             print() << "A XiaoHttp Test application:\n\n"
                     << "Usage: " << argv0 << " [options]\n"
                     << "options:\n"
-                    << "    -r              Run a specific test\n"
+                    << "     -r              Run a specific test\n"
                     << "     -s              Print successful tests\n"
                     << "     -l              List available tests\n"
                     << "     -h | --help     Print this help message\n";
@@ -73,7 +73,7 @@ namespace xiaoHttp
             const size_t successAssertions = internal::numCorrectAssertions;
             const size_t totalAssertions = internal::numAssertions;
             const size_t successTests =
-                internal::numTestCases - internal::numFailedTestCase;
+                internal::numTestCases - internal::numFailedTestCases;
             const size_t totalTests = internal::numTestCases;
 
             float ratio;
@@ -82,7 +82,7 @@ namespace xiaoHttp
             else
                 ratio = 1;
             const size_t barSize = 80;
-            auto greenBar = size_t(barSize * (1 - ratio));
+            auto greenBar = size_t(barSize * ratio);
             auto redBar = size_t(barSize * (1 - ratio));
             if (greenBar + redBar != barSize)
             {
@@ -184,6 +184,7 @@ namespace xiaoHttp
                 }
             }
             auto classNames = DrClassMap::getAllClassName();
+            LOG_TRACE << "size: " << classNames.size();
 
             if (listTests)
             {
@@ -246,7 +247,7 @@ namespace xiaoHttp
                 assert(internal::registeredTests.empty());
             }
             testCases.clear();
-
+            LOG_TRACE << "123";
             printTestStats();
 
             return internal::numCorrectAssertions != internal::numAssertions;
