@@ -77,6 +77,7 @@ set(XIAOHTTP_SOURCES
     # lib/src/HttpResponseImpl.cpp
     lib/src/HttpRequestImpl.cpp
     lib/src/HttpControllersRouter.cpp
+    lib/src/HttpControllerBinder.cpp
     # lib/src/HttpAppFrameworkImpl.cpp
     # lib/src/HttpServer.cpp
     # lib/src/ListenerManager.cpp
@@ -103,6 +104,7 @@ set(private_headers
     lib/src/HttpResponseImpl.h
     lib/src/HttpAppFrameworkImpl.h
     lib/src/HttpConnectionLimit.h
+    lib/src/HttpControllerBinder.h
     lib/src/HttpMessageBody.h
     lib/src/impl_forwards.h
     lib/src/ListenerManager.h
@@ -133,6 +135,7 @@ set(XIAOHTTP_HEADERS
     lib/inc/xiaoHttp/HttpViewData.h
     lib/inc/xiaoHttp/HttpRequest.h
     lib/inc/xiaoHttp/HttpResponse.h
+    lib/inc/xiaoHttp/HttpSimpleController.h
     lib/inc/xiaoHttp/IOThreadStorage.h
     lib/inc/xiaoHttp/xiaoHttp_test.h
     lib/inc/xiaoHttp/xiaoHttp_callbacks.h
