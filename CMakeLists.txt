@@ -63,6 +63,10 @@ set(XIAOHTTP_SOURCES
     # lib/src/AOPAdvice.cpp
     # lib/src/CacheFile.cpp
     # lib/src/Cookie.cpp
+    lib/src/ConfigAdapterManager.cpp
+    lib/src/JsonConfigAdapter.cpp
+    lib/src/YamlConfigAdapter.cpp
+    lib/src/ConfigLoader.cpp
     lib/src/DrClassMap.cpp
     lib/src/FiltersFunction.cpp
     # lib/src/HttpBinder.cpp
@@ -88,6 +92,7 @@ set(XIAOHTTP_SOURCES
 set(private_headers
     lib/src/AOPAdvice.h
     lib/src/CacheFile.h
+    lib/src/ConfigLoader.h
     lib/src/ControllerBinderBase.h
     lib/src/FiltersFunction.h
     lib/src/HttpRequestParser.h
@@ -105,6 +110,10 @@ set(private_headers
     lib/src/SessionManager.h
     lib/src/StaticFileRouter.h
     lib/src/WebSocketConnectionImpl.h
+    lib/src/ConfigAdapter.h
+    lib/src/ConfigAdapterManager.h
+    lib/src/JsonConfigAdapter.h
+    lib/src/YamlConfigAdapter.h
 )
 set(private_headers
     ${private_headers}

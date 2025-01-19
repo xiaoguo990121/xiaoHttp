@@ -40,4 +40,73 @@ namespace xiaoHttp
         {
         }
     };
+
+    using WebSocketControllerBasePtr = std::shared_ptr<WebSocketControllerBase>;
+
+    template <typename T, bool AutoCreation = true>
+    class WebSocketController : public DrObject<T>, public WebSocketControllerBase
+    {
+    public:
+        static const bool isAutoCreation = AutoCreation;
+
+        virtual ~WebSocketController()
+        {
+        }
+
+    protected:
+        WebSocketController()
+        {
+        }
+
+        static void registerSelf__(
+            const std::string &path,
+            const std::vector<internal::HttpConstraint> &constraints)
+        {
+            LOG_TRACE << "register websocket controller("
+                      << WebSocketController<T, AutoCreation>::classTypeName()
+                      << ") on path:" << path;
+            app().registerWebSocketController(
+                path,
+                WebSocketController<T, AutoCreation>::classTypeName(),
+                constraints);
+        }
+
+        static void registerSelfRegex__(
+            const std::string &regExp,
+            const std::vector<internal::HttpConstraint> &constraints)
+        {
+            LOG_TRACE << "register websocket controller("
+                      << WebSocketController<T, AutoCreation>::classTypeName()
+                      << ") on regExp:" << regExp;
+            app().registerWebSocketControllerRegex(
+                regExp,
+                WebSocketController<T, AutoCreation>::classTypeName(),
+                constraints);
+        }
+
+    private:
+        class pathRegistrator
+        {
+        public:
+            pathRegistrator()
+            {
+                if (AutoCreation)
+                {
+                    T::initPathRouting();
+                }
+            }
+        };
+
+        friend pathRegistrator;
+        static pathRegistrator registrator_;
+
+        virtual void *touch()
+        {
+            return &registrator_;
+        }
+    };
+
+    template <typename T, bool AutoCreation>
+    typename WebSocketController<T, AutoCreation>::pathRegistrator
+        WebSocketController<T, AutoCreation>::registerator_;
 }
