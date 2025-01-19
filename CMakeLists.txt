@@ -64,27 +64,34 @@ set(XIAOHTTP_SOURCES
     # lib/src/CacheFile.cpp
     # lib/src/Cookie.cpp
     lib/src/DrClassMap.cpp
+    lib/src/FiltersFunction.cpp
     # lib/src/HttpBinder.cpp
     # lib/src/HttpUtils.cpp
     # lib/src/HttpViewData.cpp
     # lib/src/HttpRequestParser.cpp
     # lib/src/HttpConnectionLimit.cpp
     # lib/src/HttpResponseImpl.cpp
-    # lib/src/HttpRequestImpl.cpp
+    lib/src/HttpRequestImpl.cpp
+    lib/src/HttpControllersRouter.cpp
     # lib/src/HttpAppFrameworkImpl.cpp
     # lib/src/HttpServer.cpp
     # lib/src/ListenerManager.cpp
     lib/src/xiaoHttp_test.cpp
     # lib/src/PluginsManager.cpp
     lib/src/RealIpResolver.cpp
+    lib/src/StaticFileRouter.cpp
     # lib/src/SessionManager.cpp
     # lib/src/Utilities.cpp
+    lib/src/WebSocketConnectionImpl.cpp
 )
 
 set(private_headers
     lib/src/AOPAdvice.h
     lib/src/CacheFile.h
+    lib/src/ControllerBinderBase.h
+    lib/src/FiltersFunction.h
     lib/src/HttpRequestParser.h
+    lib/src/HttpControllersRouter.h
     lib/src/HttpServer.h
     lib/src/HttpUtils.h
     lib/src/HttpRequestImpl.h
@@ -96,6 +103,8 @@ set(private_headers
     lib/src/ListenerManager.h
     lib/src/PluginsManager.h
     lib/src/SessionManager.h
+    lib/src/StaticFileRouter.h
+    lib/src/WebSocketConnectionImpl.h
 )
 set(private_headers
     ${private_headers}
@@ -110,6 +119,7 @@ set(XIAOHTTP_HEADERS
     lib/inc/xiaoHttp/DrObject.h
     lib/inc/xiaoHttp/HttpAppFramework.h
     lib/inc/xiaoHttp/HttpBinder.h
+    lib/inc/xiaoHttp/HttpFilter.h
     lib/inc/xiaoHttp/HttpTypes.h
     lib/inc/xiaoHttp/HttpViewData.h
     lib/inc/xiaoHttp/HttpRequest.h
@@ -119,7 +129,9 @@ set(XIAOHTTP_HEADERS
     lib/inc/xiaoHttp/xiaoHttp_callbacks.h
     lib/inc/xiaoHttp/Session.h
     lib/inc/xiaoHttp/UploadFile.h
+    lib/inc/xiaoHttp/WebSocketController.h
     lib/inc/xiaoHttp/WebSocketConnection.h
+    lib/inc/xiaoHttp/xiaoHttp.h
 )
 
 set(XIAOHTTP_UTIL_HEADERS

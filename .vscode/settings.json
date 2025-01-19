@@ -67,7 +67,9 @@
         "unordered_set": "cpp",
         "codecvt": "cpp",
         "coroutine": "cpp",
-        "csignal": "cpp"
+        "csignal": "cpp",
+        "bitset": "cpp",
+        "regex": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

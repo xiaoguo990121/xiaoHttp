@@ -75,7 +75,7 @@ namespace xiaoHttp
             std::string fromHeader_;
             std::string attributeKey_;
             bool useXForwardedFor_{false};
-        }
+        };
 
     }
 

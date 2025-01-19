@@ -200,4 +200,26 @@ namespace xiaoHttp
         Patch,
         Invalid
     };
+
+    enum class ReqReult
+    {
+        Ok = 0,
+        BadResponse,
+        NetworkFailure,
+        BadServerAddress,
+        Timeout,
+        HandshakeError,
+        InvalidCertificate,
+        EncryptionFailure,
+    };
+
+    enum class WebSocketMessageType
+    {
+        Text = 0,
+        Binary,
+        Ping,
+        Pong,
+        Close,
+        Unknown
+    };
 }

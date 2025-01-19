@@ -12,6 +12,7 @@
 #include <xiaoHttp/HttpResponse.h>
 
 #include "HttpResponseImpl.h"
+#include "StaticFileRouter.h"
 
 #include <iostream>
 #include <memory>
@@ -147,5 +148,93 @@ HttpAppFrameworkImpl::~HttpAppFrameworkImpl() noexcept
 
 HttpAppFramework &HttpAppFrameworkImpl::setStaticFilesCacheTime(int cacheTime)
 {
-    StaticFi
+    StaticFileRouter::instance().steStaticFileCacheTime(cacheTime);
+    return *this;
+}
+
+int HttpAppFrameworkImpl::staticFilesCacheTime() const
+{
+    return StaticFileRouter::instance().staticFilesCacheTime();
+}
+
+HttpAppFramework &HttpAppFrameworkImpl::setGzipStatic(bool useGzipStatic)
+{
+    StaticFileRouter::instance().setGzipStatic(useGzipStatic);
+    return *this;
+}
+
+HttpAppFramework &HttpAppFrameworkImpl::setBrStatic(bool useGzipStatic)
+{
+    StaticFileRouter::instance().setBrStatic(useGzipStatic);
+    return *this;
+}
+
+HttpAppFramework &HttpAppFrameworkImpl::setImplicitPageEnable(
+    bool useImplicitPage)
+{
+    StaticFileRouter::instance().setImplicitPageEnable(useImplicitPage);
+    return *this;
+}
+
+bool HttpAppFrameworkImpl::isImplicitPageEnabled() const
+{
+    return StaticFileRouter::instance().isImplicitPageEnabled();
+}
+
+HttpAppFramework &HttpAppFrameworkImpl::setImplicitPage(
+    const std::string &implicitPageFile)
+{
+    StaticFileRouter::instance().setImplicitPage(implicitPageFile);
+    return *this;
+}
+
+const std::string &HttpAppFrameworkImpl::getImplicitPage() const
+{
+    return StaticFileRouter::instance().getImplicitPage();
+}
+
+#ifndef _WIN32
+HttpAppFramework &HttpAppFrameworkImpl::enableDynamicViewsLoading(
+    const std::vector<std::string> &libPaths,
+    const std::string &outputPath)
+{
+    assert(!running_);
+
+    for (auto const &libpath : libPaths)
+    {
+        if (libpath[0] == '/' ||
+            (libpath.length() >= 2 && libpath[0] == '.' && libpath[1] == '/') ||
+            (libpath.length() >= 3 && libpath[0] == '.' && libpath[1] == '.' &&
+             libpath[2] == '/') ||
+            libpath == "." || libpath == "..")
+        {
+            libFilePaths_.push_back(libpath);
+        }
+        else
+        {
+            if (rootPath_[rootPath_.length() - 1] == '/')
+                libFilePaths_.push_back(rootPath_ + libpath);
+            else
+                libFilePaths_.push_back(rootPath_ + "/" + libpath);
+        }
+    }
+    libFileOutputPath_ = outputPath;
+    if (!libFileOutputPath_.empty())
+    {
+        if (xiaoHttp::utils::createPath(libFileOutputPath_) == -1)
+        {
+            LOG_FATAL << "Can't create " << libFileOutputPath_
+                      << " path for dynamic views";
+            exit(-1);
+        }
+    }
+
+    return *this;
+}
+#endif
+HttpAppFramework &HttpAppFrameworkImpl::setFileTypes(
+    const std::vector<std::string> &types)
+{
+    StaticFileRouter::instance().setFileTypes(types);
+    return *this;
 }

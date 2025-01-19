@@ -16,6 +16,7 @@
 #include <xiaoHttp/exports.h>
 #include <xiaoHttp/utils/HttpConstraint.h>
 #include <xiaoHttp/HttpBinder.h>
+#include <xiaoHttp/HttpFilter.h>
 #include <xiaoHttp/HttpRequest.h>
 #include <xiaoHttp/HttpResponse.h>
 #include <xiaoHttp/plugins/Plugin.h>

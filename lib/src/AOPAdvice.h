@@ -12,7 +12,7 @@
 #include "impl_forwards.h"
 #include <xiaoHttp/xiaoHttp_callbacks.h>
 #include <xiaoNet/net/callbacks.h>
-#include <xiaoNet/InetAddress.h>
+#include <xiaoNet/net/InetAddress.h>
 
 namespace xiaoHttp
 {

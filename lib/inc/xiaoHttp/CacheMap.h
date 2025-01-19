@@ -11,6 +11,7 @@
 #pragma once
 
 #include <xiaoNet/net/EventLoop.h>
+#include <xiaoLog/Logger.h>
 #include <functional>
 #include <memory>
 #include <unordered_map>
