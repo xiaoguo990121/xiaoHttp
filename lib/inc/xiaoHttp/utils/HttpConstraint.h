@@ -52,15 +52,15 @@ namespace xiaoHttp
                 return method_;
             }
 
-            const std::string &getFilterName() const
+            const std::string &getMiddlewareName() const
             {
-                return filterName_;
+                return middlewareName_;
             }
 
         private:
             ConstraintType type_{ConstraintType::None};
             HttpMethod method_{HttpMethod::Invalid};
-            std::string filterName_;
+            std::string middlewareName_;
         };
     }
 }

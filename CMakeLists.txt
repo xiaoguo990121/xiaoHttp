@@ -60,6 +60,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES EXPORT_NAME XiaoLog)
 include(cmake/ParseAndAddXiaoHttpTests.cmake)
 
 set(XIAOHTTP_SOURCES
+    lib/src/AccessLogger.cpp
     # lib/src/AOPAdvice.cpp
     # lib/src/CacheFile.cpp
     # lib/src/Cookie.cpp
@@ -155,6 +156,7 @@ set(XIAOHTTP_UTIL_HEADERS
 
 set(XIAOHTTP_PLUGIN_HEADERS
     lib/inc/xiaoHttp/plugins/Plugin.h
+    lib/inc/xiaoHttp/plugins/AccessLogger.h
     lib/inc/xiaoHttp/plugins/RealIpResolver.h
 )
 
