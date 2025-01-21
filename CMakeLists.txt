@@ -28,6 +28,7 @@ set(INSTALL_XIAONET_CMAKE_DIR
 message("${INSTALL_XIAOHTTP_CMAKE_DIR}")
 
 add_library(${PROJECT_NAME})
+
 if(BUILD_SHARED_LIBS)
     list(
         FIND
@@ -69,7 +70,9 @@ set(XIAOHTTP_SOURCES
     lib/src/YamlConfigAdapter.cpp
     lib/src/ConfigLoader.cpp
     lib/src/DrClassMap.cpp
+    lib/src/DrTemplateBase.cpp
     lib/src/FiltersFunction.cpp
+    lib/src/FixedWindowRateLimiter.cpp
     # lib/src/HttpBinder.cpp
     # lib/src/HttpUtils.cpp
     # lib/src/HttpViewData.cpp
@@ -79,12 +82,14 @@ set(XIAOHTTP_SOURCES
     lib/src/HttpRequestImpl.cpp
     lib/src/HttpControllersRouter.cpp
     lib/src/HttpControllerBinder.cpp
+    lib/src/HttpFileUploadRequest.cpp
     # lib/src/HttpAppFrameworkImpl.cpp
     # lib/src/HttpServer.cpp
     # lib/src/ListenerManager.cpp
     lib/src/xiaoHttp_test.cpp
     # lib/src/PluginsManager.cpp
     lib/src/RealIpResolver.cpp
+    lib/src/RateLimiter.cpp
     lib/src/StaticFileRouter.cpp
     # lib/src/SessionManager.cpp
     # lib/src/Utilities.cpp
@@ -106,12 +111,14 @@ set(private_headers
     lib/src/HttpAppFrameworkImpl.h
     lib/src/HttpConnectionLimit.h
     lib/src/HttpControllerBinder.h
+    lib/src/HttpFileUploadRequest.h
     lib/src/HttpMessageBody.h
     lib/src/impl_forwards.h
     lib/src/ListenerManager.h
     lib/src/PluginsManager.h
     lib/src/SessionManager.h
     lib/src/StaticFileRouter.h
+    lib/src/FixedWindowRateLimiter.h
     lib/src/WebSocketConnectionImpl.h
     lib/src/ConfigAdapter.h
     lib/src/ConfigAdapterManager.h
@@ -129,6 +136,7 @@ set(XIAOHTTP_HEADERS
     lib/inc/xiaoHttp/Cookie.h
     lib/inc/xiaoHttp/DrClassMap.h
     lib/inc/xiaoHttp/DrObject.h
+    lib/inc/xiaoHttp/DrTemplateBase.h
     lib/inc/xiaoHttp/HttpAppFramework.h
     lib/inc/xiaoHttp/HttpBinder.h
     lib/inc/xiaoHttp/HttpFilter.h
@@ -145,6 +153,7 @@ set(XIAOHTTP_HEADERS
     lib/inc/xiaoHttp/WebSocketController.h
     lib/inc/xiaoHttp/WebSocketConnection.h
     lib/inc/xiaoHttp/xiaoHttp.h
+    lib/inc/xiaoHttp/RateLimiter.h
 )
 
 set(XIAOHTTP_UTIL_HEADERS

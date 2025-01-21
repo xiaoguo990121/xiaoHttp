@@ -10,7 +10,17 @@
 
 #include <xiaoHttp/xiaoHttp.h>
 #include <xiaoHttp/plugins/AccessLogger.h>
+#include <xiaoHttp/plugins/RealIpResolver.h>
 #include <regex>
+#include <thread>
+#if !defined _WIN32 && !defined __HAIKU__
+#include <unistd.h>
+#include <sys/syscall.h>
+#elif defined __HAIKU__
+#include <unistd.h>
+#else
+#include <sstream>
+#endif
 
 using namespace xiaoHttp;
 using namespace xiaoHttp::plugin;
@@ -28,16 +38,16 @@ void AccessLogger::initAndStart(const Json::Value &config)
     logFunctionMap_ = {{"$request_path", outputReqPath},
                        {"$path", outputReqPath},
                        {"$date",
-                        [this](trantor::LogStream &stream,
-                               const drogon::HttpRequestPtr &req,
-                               const drogon::HttpResponsePtr &resp)
+                        [this](xiaoLog::LogStream &stream,
+                               const xiaoHttp::HttpRequestPtr &req,
+                               const xiaoHttp::HttpResponsePtr &resp)
                         {
                             outputDate(stream, req, resp);
                         }},
                        {"$request_date",
-                        [this](trantor::LogStream &stream,
-                               const drogon::HttpRequestPtr &req,
-                               const drogon::HttpResponsePtr &resp)
+                        [this](xiaoLog::LogStream &stream,
+                               const xiaoHttp::HttpRequestPtr &req,
+                               const xiaoHttp::HttpResponsePtr &resp)
                         {
                             outputReqDate(stream, req, resp);
                         }},
@@ -194,4 +204,293 @@ void AccessLogger::createLogFunctions(std::string format)
                 stream << "\n"
             });
     }
+}
+
+AccessLogger::LogFunction AccessLogger::newLogFunction(
+    const std::string &placeholder)
+{
+    auto iter = logFunctionMap_.find(placeholder);
+    if (iter != logFunctionMap_.end())
+    {
+        return iter->second;
+    }
+    if (placeholder.find("$http_") == 0 && placeholder.size() > 6)
+    {
+        auto headerName = placeholder.substr(6);
+        return [headerName = std::move(headerName)](xiaoLog::LogStream &stream,
+                                                    const xiaoHttp::HttpRequestPtr &req,
+                                                    const xiaoHttp::HttpResponsePtr &)
+        {
+            outputReqHeader(stream, req, headerName);
+        };
+    }
+    if (placeholder.find("$cookie_") == 0 && placeholder.size() > 8)
+    {
+        auto cookieName = placeholder.substr(8);
+        return [cookieName = std::move(cookieName)](xiaoLog::LogStream &stream,
+                                                    const xiaoHttp::HttpRequestPtr &req,
+                                                    const xiaoHttp::HttpResponsePtr &)
+        {
+            outputReqCookie(stream, req, cookieName);
+        };
+    }
+    if (placeholder.find("$upstream_http_") == 0 && placeholder.size() > 15)
+    {
+        auto headerName = placeholder.substr(15);
+        return [headerName = std::move(headerName)](xiaoLog::LogStream &stream,
+                                                    const xiaoHttp::HttpRequestPtr &,
+                                                    const xiaoHttp::HttpResponsePtr &resp)
+        {
+            outputRespHeader(stream, resp, headerName);
+        };
+    }
+    return [placeholder](xiaoLog::LogStream &stream,
+                         const xiaoHttp::HttpRequestPtr &,
+                         const xiaoHttp::HttpResponsePtr &)
+    {
+        stream << placeholder;
+    };
+}
+
+void AccessLogger::ouputReqPath(xiaoLog::LogStream &stream,
+                                const xiaoHttp::HttpRequestPtr &req,
+                                const xiaoHttp::HttpResponsePtr &)
+{
+    stream << req->path();
+}
+
+void AccessLogger::outputDate(xiaoLog::LogStream &stream,
+                              const xiaoHttp::HttpRequestPtr &,
+                              const xiaoHttp::HttpResponsePtr &) const
+{
+    if (useCustomTimeFormat_)
+    {
+        if (useLocalTime_)
+        {
+            stream << xiaoLog::Date::now().toCustomedFormattedStringLocal(
+                timeFormat_, showMicroseconds_);
+        }
+        else
+        {
+            stream << xiaoLog::Date::now().toCustomedFormattedString(
+                timeFormat_, showMicroseconds_);
+        }
+    }
+    else
+    {
+        if (useLocalTime_)
+        {
+            stream << xiaoLog::Date::now().toFormattedStringLocal(
+                showMicroseconds_);
+        }
+        else
+        {
+            stream << xiaoLog::Date::now().toFormattedString(showMicroseconds_);
+        }
+    }
+}
+
+void AccessLogger::outputReqDate(xiaoLog::LogStream &stream,
+                                 const xiaoHttp::HttpRequestPtr &req,
+                                 const xiaoHttp::HttpResponsePtr &) const
+{
+    if (useCustomTimeFormat_)
+    {
+        if (useLocalTime_)
+        {
+            stream << req->creationDate().toCustomedFormattedStringLocal(
+                timeFormat_, showMicroseconds_);
+        }
+        else
+        {
+            stream << req->creationDate().toCustomedFormattedString(
+                timeFormat_, showMicroseconds_);
+        }
+    }
+    else
+    {
+        if (useLocalTime_)
+        {
+            stream << req->creationDate().toFormattedStringLocal(
+                showMicroseconds_);
+        }
+        else
+        {
+            stream << req->creationDate().toFormattedString(showMicroseconds_);
+        }
+    }
+}
+
+void AccessLogger::outputReqQuery(xiaoLog::LogStream &stream,
+                                  const xiaoHttp::HttpRequestPtr &req,
+                                  const xiaoHttp::HttpResponsePtr &)
+{
+    auto &query = req->query();
+    if (query.empty())
+    {
+        stream << req->path();
+    }
+    else
+    {
+        stream << req->path() << "?" << query;
+    }
+}
+
+void AccessLogger::outputVersion(xiaoLog::LogStream &stream,
+                                 const xiaoHttp::HttpRequestPtr &req,
+                                 const xiaoHttp::HttpResponsePtr &)
+{
+    stream << req->versionString();
+}
+
+void AccessLogger::outputReqLine(xiaoLog::LogStream &stream,
+                                 const xiaoHttp::HttpRequestPtr &req,
+                                 const xiaoHttp::HttpResponsePtr &)
+{
+    auto &query = req->query();
+    if (query.empty())
+    {
+        stream << req->methodString() << " " << req->path() << " "
+               << req->versionString();
+    }
+    else
+    {
+        stream << req->methodString() << " " << req->path() << '?' << query
+               << " " << req->versionString();
+    }
+}
+
+void AccessLogger::outputRemoteAddr(xiaoLog::LogStream &stream,
+                                    const xiaoHttp::HttpRequestPtr &req,
+                                    const xiaoHttp::HttpResponsePtr &)
+{
+    if (useRealIp_)
+    {
+        stream << RealIpResolver::GetRealAddr(req).toIpPort();
+    }
+    else
+    {
+        stream << req->peerAddr().toIpPort();
+    }
+}
+
+void AccessLogger::outputLocalAddr(xiaoLog::LogStream &stream,
+                                   const xiaoHttp::HttpRequestPtr &req,
+                                   const xiaoHttp::HttpResponsePtr &)
+{
+    stream << req->localAddr().toIpPort();
+}
+
+void AccessLogger::outputReqLength(xiaoLog::LogStream &stream,
+                                   const xiaoHttp::HttpRequestPtr &req,
+                                   const xiaoHttp::HttpResponsePtr &)
+{
+    stream << req->body().length();
+}
+
+void AccessLogger::outputRespLength(xiaoLog::LogStream &stream,
+                                    const xiaoHttp::HttpRequestPtr &req,
+                                    const xiaoHttp::HttpResponsePtr &)
+{
+    stream << resp->body().length();
+}
+
+void AccessLogger::outputMethod(xiaoLog::LogStream &stream,
+                                const xiaoHttp::HttpRequestPtr &req,
+                                const xiaoHttp::HttpResponsePtr &)
+{
+    stream << req->methodString();
+}
+
+void AccessLogger::outputThreadNumber(xiaoLog::LogStream &stream,
+                                      const xiaoHttp::HttpRequestPtr &,
+                                      const xiaoHttp::HttpResponsePtr &)
+{
+#ifdef __linux__
+    static thread_local pid_t threadId_{0};
+#else
+    static thread_local uint64_t threadId_{0};
+#endif
+#ifdef __linux__
+    if (threadId_ == 0)
+        threadId_ = static_cast<pid_t>(::syscall(SYS_gettid));
+#elif defined __FreeBSD__
+    if (threadId_ == 0)
+    {
+        threadId_ = pthread_getthreadid_np();
+    }
+#elif defined __OpenBSD__
+    if (threadId_ == 0)
+    {
+        threadId_ = getthrid();
+    }
+#elif defined _WIN32 || defined __HAIKU__
+    if (threadId_ == 0)
+    {
+        std::stringstream ss;
+        ss << std::this_thread::get_id();
+        threadId_ = std::stoull(ss.str());
+    }
+#else
+    if (threadId_ == 0)
+    {
+        pthread_threadid_np(NULL, &threadId_);
+    }
+#endif
+    stream << threadId_;
+}
+
+void AccessLogger::outputReqHeader(xiaoLog::LogStream &stream,
+                                   const xiaoHttp::HttpRequestPtr &req,
+                                   const std::string &headerName)
+{
+    stream << headerName << ": " << req->getHeader(headerName);
+}
+
+void AccessLogger::outputReqCookie(xiaoLog::LogStream &stream,
+                                   const xiaoHttp::HttpRequestPtr &req,
+                                   const std::string &cookie)
+{
+    stream << "(cookie)" << cookie << "=" << req->getCookie(cookie);
+}
+
+void AccessLogger::outputRespHeader(xiaoLog::LogStream &stream,
+                                    const xiaoHttp::HttpResponsePtr &resp,
+                                    const std::string &headerName)
+{
+    stream << headerName << ": " << resp->getHeader(headerName);
+}
+
+void AccessLogger::outputStatusString(xiaoLog::LogStream &stream,
+                                      const xiaoHttp::HttpRequestPtr &,
+                                      const xiaoHttp::HttpResponsePtr &resp)
+{
+    int code = resp->getStatusCode();
+    stream << code << " " << statusCodeToString(code);
+}
+
+void AccessLogger::outputStatusCode(xiaoLog::LogStream &stream,
+                                    const xiaoHttp::HttpRequestPtr &,
+                                    const xiaoHttp::HttpResponsePtr &resp)
+{
+    stream << resp->getStatusCode();
+}
+
+void AccessLogger::outputProcessingTime(xiaoLog::LogStream &stream,
+                                        const xiaoHttp::HttpRequestPtr &req,
+                                        const xiaoHttp::HttpResponsePtr &)
+{
+    auto start = req->creationDate();
+    auto end = xiaoLog::Date::now();
+    auto duration =
+        end.microSecondsSinceEpoch() - start.microSecondsSinceEpoch();
+    auto seconds = static_cast<double>(duration) / 1000000.0;
+    stream << seconds;
+}
+
+void AccessLogger::outputRespContentType(xiaoLog::LogStream &stream,
+                                         const xiaoHttp::HttpRequestPtr &,
+                                         const xiaoHttp::HttpResponsePtr &resp)
+{
+    stream << resp->contentTypeString();
 }
