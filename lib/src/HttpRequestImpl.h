@@ -10,12 +10,14 @@
 
 #pragma once
 
-#include <xiaoHttp/HttpRequest.h>
+#include "HttpUtils.h"
 #include "CacheFile.h"
+
+#include <xiaoHttp/HttpRequest.h>
+#include <xiaoHttp/HttpTypes.h>
+
 #include <xiaoNet/net/EventLoop.h>
 #include <xiaoNet/utils/MsgBuffer.h>
-#include <xiaoHttp/HttpTypes.h>
-#include "HttpUtils.h"
 
 namespace xiaoHttp
 {
@@ -26,6 +28,14 @@ namespace xiaoHttp
         NotSupported,
         Ok
     };
+
+    enum class ReqStreamStatus
+    {
+        None = 0,
+        Open = 1,
+        Finish = 2,
+        Error = 3
+    }
 
     class HttpRequestImpl : public HttpRequest
     {
@@ -597,8 +607,11 @@ namespace xiaoHttp
         bool passThrough_{false};
         std::vector<std::string> routingParams_;
 
-    protected:
-        std::string content_;
+        ReqStreamStatus streamStatus_{ReqStreamStatus::None};
+        std::function<void()> streamFinishCb_;
+        RequestSt
+
+            protected : std::string content_;
         xiaoNet::EventLoop *loop_;
         mutable ContentType contentType_{CT_TEXT_PLAIN};
         mutable bool flagForParsingContentType_{false};

@@ -73,6 +73,9 @@ set(XIAOHTTP_SOURCES
     lib/src/DrTemplateBase.cpp
     lib/src/FiltersFunction.cpp
     lib/src/FixedWindowRateLimiter.cpp
+    lib/src/GlobalFilters.cpp
+    lib/src/Histogram.cpp
+    lib/src/Hodor.cpp
     # lib/src/HttpBinder.cpp
     # lib/src/HttpUtils.cpp
     # lib/src/HttpViewData.cpp
@@ -83,6 +86,7 @@ set(XIAOHTTP_SOURCES
     lib/src/HttpControllersRouter.cpp
     lib/src/HttpControllerBinder.cpp
     lib/src/HttpFileUploadRequest.cpp
+    lib/src/RequestStream.cpp
     # lib/src/HttpAppFrameworkImpl.cpp
     # lib/src/HttpServer.cpp
     # lib/src/ListenerManager.cpp
@@ -144,6 +148,7 @@ set(XIAOHTTP_HEADERS
     lib/inc/xiaoHttp/HttpViewData.h
     lib/inc/xiaoHttp/HttpRequest.h
     lib/inc/xiaoHttp/HttpResponse.h
+    lib/inc/xiaoHttp/RequestStream.h
     lib/inc/xiaoHttp/HttpSimpleController.h
     lib/inc/xiaoHttp/IOThreadStorage.h
     lib/inc/xiaoHttp/xiaoHttp_test.h
@@ -163,10 +168,22 @@ set(XIAOHTTP_UTIL_HEADERS
     lib/inc/xiaoHttp/utils/Utilities.h    
 )
 
+set(XIAOHTTP_MONITORING_HEADERS
+    lib/inc/xiaoHttp/utils/monitoring/Counter.h
+    lib/inc/xiaoHttp/utils/monitoring/Metric.h
+    lib/inc/xiaoHttp/utils/monitoring/Registry.h
+    lib/inc/xiaoHttp/utils/monitoring/Collector.h
+    lib/inc/xiaoHttp/utils/monitoring/Sample.h
+    lib/inc/xiaoHttp/utils/monitoring/Gauge.h
+    lib/inc/xiaoHttp/utils/monitoring/Histogram.h
+)
+
 set(XIAOHTTP_PLUGIN_HEADERS
     lib/inc/xiaoHttp/plugins/Plugin.h
     lib/inc/xiaoHttp/plugins/AccessLogger.h
+    lib/inc/xiaoHttp/plugins/GlobalFilters.h
     lib/inc/xiaoHttp/plugins/RealIpResolver.h
+    lib/inc/xiaoHttp/plugins/Hodor.h
 )
 
 

@@ -137,7 +137,7 @@ namespace xiaoHttp
         /**
          * @brief Check if the method is or was HttpMethod::Head
          * @details Allows to known that an incoming request is a HEAD request, since
-         *          drogon sets the method to HttpMethod::Get before calling the
+         *          xiaoHttp sets the method to HttpMethod::Get before calling the
          *          controller
          *
          * @return true
@@ -145,11 +145,30 @@ namespace xiaoHttp
          */
         virtual bool isHead() const = 0;
 
+        /**
+         * @brief Get the Header string identified by the key parameter.
+         * @note If there is no the header, a empty string is returned.
+         * The key is case insensitive
+         * @param key
+         * @return const std::string&
+         */
         virtual const std::string &getHeader(std::string key) const = 0;
 
+        /**
+         * @brief Set the header string identified by the field parameter
+         *
+         * @param field The field parameter is transformed to lower case before
+         * storing.
+         * @param value The value of the header.
+         */
         virtual void addHeader(std::string field, const std::string &value) = 0;
         virtual void addHeader(std::string field, std::string &&value) = 0;
 
+        /**
+         * @brief  Remove the header identified by the key parameter.
+         *
+         * @param key The key is case insensitive
+         */
         virtual void removeHeader(std::string key) = 0;
 
         virtual const std::string &getCookie(const std::string &field) const = 0;
@@ -208,6 +227,7 @@ namespace xiaoHttp
         virtual const char *bodyData() const = 0;
         virtual size_t bodyLength() const = 0;
 
+        /// Set the content string of the request.
         virtual void setBody(const std::string &body) = 0;
 
         virtual void setBody(std::string &&body) = 0;
@@ -384,10 +404,25 @@ namespace xiaoHttp
         /// Create a normal request with http method Get and version Http1.1.
         static HttpRequestPtr newHttpRequst();
 
+        /// Create a http request with:
+        /// Method: Get
+        /// Version: Http1.1
+        /// Content type: application/json, the @param data is serialized into the
+        /// content of the request.
         static HttpRequestPtr newHttpJsonRequest(const Json::Value &data);
 
+        /// Create a http request with:
+        /// Method: Post
+        /// Version: Http1.1
+        /// Content type: application/x-www-form-urlencoded
         static HttpRequestPtr newHttpForPostRequest();
 
+        /// Create a http file upload request with:
+        /// Method: Post
+        /// Version: Http1.1
+        /// Content type: multipart/form-data
+        /// The @param files represents pload files which are transferred to the
+        /// server via the multipart/form-data format
         static HttpRequestPtr newFileUploadRequest(
             const std::vector<UploadFile> &files);
 
