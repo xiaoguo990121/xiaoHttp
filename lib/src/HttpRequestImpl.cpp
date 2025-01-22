@@ -55,6 +55,14 @@ void HttpRequestImpl::parseJson() const
     }
 }
 
+void HttpRequestImpl::parseParameters() const
+{
+    auto input = queryView();
+    if (!input.empry())
+    {
+    }
+}
+
 const char *HttpRequestImpl::versionString() const
 {
     const char *result = "UNKNOWN";
@@ -144,4 +152,36 @@ bool HttpRequestImpl::setMethod(const char *start, const char *end)
     }
 
     return method_ != Invalid;
+}
+
+const char *HttpRequestImpl::methodString() const
+{
+    const char *result = "UNKNOWN";
+    switch (method_)
+    {
+    case Get:
+        result = "GET";
+        break;
+    case Post:
+        result = "POST";
+        break;
+    case Head:
+        result = "HEAD";
+        break;
+    case Put:
+        result = "PUT";
+        break;
+    case Delete:
+        result = "DELETE";
+        break;
+    case Options:
+        result = "OPTIONS";
+        break;
+    case Patch:
+        result = "PATCH";
+        break;
+    default:
+        break;
+    }
+    return result;
 }

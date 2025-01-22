@@ -14,9 +14,11 @@
 #include "CacheFile.h"
 
 #include <xiaoHttp/HttpRequest.h>
+#include <xiaoHttp/RequestStream.h>
 #include <xiaoHttp/HttpTypes.h>
 
 #include <xiaoNet/net/EventLoop.h>
+#include <xiaoNet/net/TcpConnection.h>
 #include <xiaoNet/utils/MsgBuffer.h>
 
 namespace xiaoHttp
@@ -75,6 +77,13 @@ namespace xiaoHttp
             jsonParsingErrorPtr_.reset();
             peerCertificate_.reset();
             routingParams_.clear();
+
+            streamStatus_ = ReqStreamStatus::None;
+            streamReaderPtr_.reset();
+            streamFinishCb_ = nullptr;
+            streamExceptionPtr_ = nullptr;
+            startProcessing_ = false;
+            connPtr_.reset();
         }
 
         xiaoNet::EventLoop *getLoop()
@@ -609,9 +618,13 @@ namespace xiaoHttp
 
         ReqStreamStatus streamStatus_{ReqStreamStatus::None};
         std::function<void()> streamFinishCb_;
-        RequestSt
+        RequestStreamReaderPtr streamReaderPtr_;
+        std::exception_ptr streamExceptionPtr_;
+        bool startProcessing_{false};
+        std::weak_ptr<xiaoNet::TcpConnection> connPtr_;
 
-            protected : std::string content_;
+    protected:
+        std::string content_;
         xiaoNet::EventLoop *loop_;
         mutable ContentType contentType_{CT_TEXT_PLAIN};
         mutable bool flagForParsingContentType_{false};
