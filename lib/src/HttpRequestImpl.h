@@ -211,6 +211,10 @@ namespace xiaoHttp
 
         std::string_view bodyView() const
         {
+            if (isStreamMode())
+            {
+                return emptySv_;
+            }
             if (cacheFilePtr_)
             {
                 return cacheFilePtr_->getStringView();
@@ -220,6 +224,10 @@ namespace xiaoHttp
 
         const char *bodyData() const override
         {
+            if (isStreamMode())
+            {
+                return emptySv_.data();
+            }
             if (cacheFilePtr_)
             {
                 return cacheFilePtr_->getStringView().data();
@@ -229,6 +237,10 @@ namespace xiaoHttp
 
         size_t bodyLength() const override
         {
+            if (isStreamMode())
+            {
+                return emptySv_.length();
+            }
             if (cacheFilePtr_)
             {
                 return cacheFilePtr_->getStringView().length();
@@ -247,6 +259,10 @@ namespace xiaoHttp
 
         std::string_view contentView() const
         {
+            if (isStreamMode())
+            {
+                return emptySv_;
+            }
             if (cacheFilePtr_)
                 return cacheFilePtr_->getStringView();
             return content_;
@@ -353,6 +369,16 @@ namespace xiaoHttp
             return cookies_;
         }
 
+        std::optional<size_t> getContentLengthHeaderValue() const
+        {
+            return contentLengthHeaderValue_;
+        }
+
+        size_t realContentLength() const override
+        {
+            return realContentLength_;
+        }
+
         void setParameter(const std::string &key, const std::string &value) override
         {
             flagForParsingParameters_ = true;
@@ -401,9 +427,9 @@ namespace xiaoHttp
             headers_[std::move(field)] = std::move(value);
         }
 
-        void addCookie(const std::string &key, const std::string &value) override
+        void addCookie(std::string key, std::string value) override
         {
-            cookies_[key] = value;
+            cookies_[std::move(key)] = std::move(value);
         }
 
         void setPassThrough(bool flag) override
@@ -508,6 +534,21 @@ namespace xiaoHttp
             return keepAlive_;
         }
 
+        bool connected() const noexcept override
+        {
+            if (auto conn = connPtr_.lock())
+            {
+                return conn->connected();
+            }
+            return false;
+        }
+
+        const std::weak_ptr<xiaoNet::TcpConnection> &getConnectionPtr()
+            const noexcept override
+        {
+            return connPtr_;
+        }
+
         bool isOnSecureConnection() const noexcept override
         {
             return isOnSecureConnection_;
@@ -522,6 +563,34 @@ namespace xiaoHttp
         }
 
         StreamDecompressStatus decompressBody();
+
+        ReqStreamStatus streamStatus() const
+        {
+            return streamStatus_;
+        }
+
+        bool isStreamMode() const
+        {
+            return streamStatus_ > ReqStreamStatus::None;
+        }
+
+        void streamStart();
+        void streamFinish();
+        void streamError(std::exception_ptr ex);
+
+        void setStreamReader(RequestStreamReaderPtr reader);
+        void waitForStreamFinish(std::function<void()> &&cb);
+        void quitStreamMode();
+
+        void startProcessing()
+        {
+            startProcessing_ = true;
+        }
+
+        bool isProcessingStarted() const
+        {
+            return startProcessing_;
+        }
 
         ~HttpRequestImpl();
 
@@ -588,12 +657,16 @@ namespace xiaoHttp
         StreamDecompressStatus decompressBodyBrotli() noexcept;
 #endif
         StreamDecompressStatus decompressBodyGzip() noexcept;
+
+        static constexpr const std::string_view emptySv_{""};
+
         mutable bool flagForParsingParameters_{false};
         mutable bool flagForParsingJson_{false};
         HttpMethod method_{Invalid};
         HttpMethod previousMethod_{Invalid};
         Version version_{Version::kUnKnown};
         std::string path_;
+
         std::string originalPath_;
         bool pathEncode_{true};
         std::string_view matchedPathPattern_{""};

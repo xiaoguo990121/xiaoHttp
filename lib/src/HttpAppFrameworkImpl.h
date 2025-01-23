@@ -81,6 +81,10 @@ namespace xiaoHttp
             const std::string &ctrlName,
             const std::vector<internal::HttpConstraint> &filtersAndMethods)
             override;
+        HttpAppFramework &registerWebSocketControllerRegex(
+            const std::string &regExp,
+            const std::string &ctrlName,
+            const std::vector<internal::HttpConstraint> &constraints) override;
         HttpAppFramework &registerHttpSimpleController(
             const std::string &pathName,
             const std::string &ctrlName,
@@ -630,6 +634,16 @@ namespace xiaoHttp
         HttpResponsePtr handleSessionForResponse(const HttpRequestImplPtr &req,
                                                  const HttpResponsePtr &resp);
 
+        HttpAppFramework &setBeforeListenSockOptCallback(
+            std::function<void(int)> cb) override;
+        HttpAppFramework &setAfterAcceptSockOptCallback(
+            std::function<void(int)> cb) override;
+        HttpAppFramework &setConnectionCallback(
+            std::function<void(const xiaoNet::TcpConnectionPtr &)> cb) override;
+
+        HttpAppFramework &enableRequestStream(bool enable) override;
+        bool isRequestStreamEnabled() const override;
+
     private:
         void registerHttpController(const std::string &pathPattern,
                                     const internal::HttpBinderBasePtr &binder,
@@ -722,5 +736,7 @@ namespace xiaoHttp
 
         ExceptionHandler exceptionHandler_{defaultExceptionHandler};
         bool enableCompressedRequest_{false};
+
+        bool enableRequestStream_{false};
     };
 }

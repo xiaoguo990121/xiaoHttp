@@ -294,6 +294,12 @@ namespace xiaoHttp
             const std::vector<internal::HttpConstraint> &filtersAndMethods =
                 std::vector<internal::HttpConstraint>{}) = 0;
 
+        virtual HttpAppFramework &registerWebSocketControllerRegex(
+            const std::string &regExp,
+            const std::string &ctrlName,
+            const std::vector<internal::HttpConstraint> &constraints =
+                std::vector<internal::HttpConstraint>{}) = 0;
+
         template <typename T>
         HttpAppFramework &registerController(const std::shared_ptr<T> &ctrlPtr)
         {
@@ -1164,6 +1170,34 @@ namespace xiaoHttp
          * @brief get the number of active connections.
          */
         virtual int64_t getConnectionCount() const = 0;
+
+        /**
+         * @brief Set the before listen setsockopt callback.
+         *
+         * @param cb This callback will be called before the listen
+         */
+        virtual HttpAppFramework &setBeforeListenSockOptCallback(
+            std::function<void(int)> cb) = 0;
+
+        /**
+         * @brief Set the after accept setsockopt callback.
+         *
+         * @param cb This callback will be called after accept
+         */
+        virtual HttpAppFramework &setAfterAcceptSockOptCallback(
+            std::function<void(int)> cb) = 0;
+
+        /**
+         * @brief Set the client disconnect or connect callback.
+         *
+         * @param cb This callback will be called, when the client disconnect or
+         * connect
+         */
+        virtual HttpAppFramework &setConnectionCallback(
+            std::function<void(const trantor::TcpConnectionPtr &)> cb) = 0;
+
+        virtual HttpAppFramework &enableRequestStream(bool enable = true) = 0;
+        virtual bool isRequestStreamEnabled() const = 0;
 
     private:
         virtual void registerHttpController(

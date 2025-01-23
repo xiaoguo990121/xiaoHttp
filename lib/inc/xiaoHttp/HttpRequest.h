@@ -393,8 +393,8 @@ namespace xiaoHttp
 
         virtual void setCustomContentTypeString(const std::string &type) = 0;
 
-        virtual void addCookie(const std::string &key,
-                               const std::string &value) = 0;
+        virtual void addCookie(std::string key,
+                               std::string value) = 0;
 
         virtual void setPassThrough(bool flag) = 0;
 

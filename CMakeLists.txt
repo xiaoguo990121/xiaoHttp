@@ -188,7 +188,17 @@ set(XIAOHTTP_PLUGIN_HEADERS
 
 
 set(ORM_HEADERS
+    orm_lib/inc/xiaoHttp/orm/ArrayParser.h
     orm_lib/inc/xiaoHttp/orm/DbClient.h
+    orm_lib/inc/xiaoHttp/orm/DbConfig.h
+    orm_lib/inc/xiaoHttp/orm/Exception.h
+    orm_lib/inc/xiaoHttp/orm/Result.h
+)
+
+set(XIAOHTTP_SOURCES
+    ${XIAOHTTP_SOURCES}
+    orm_lib/src/ArrayParser.cpp
+    orm_lib/src/Exception.cpp
 )
 
 
